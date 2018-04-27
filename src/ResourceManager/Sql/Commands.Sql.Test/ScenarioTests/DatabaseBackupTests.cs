@@ -99,6 +99,18 @@ namespace Microsoft.Azure.Commands.Sql.Test.ScenarioTests
         }
         [Fact]
         [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void TestShortTermRetentionOnPremiumSubscriptions()
+        {
+            RunPowerShellTest("Test-ShortTermRetentionPolicyOnPremiumSubscription");
+        }
+        [Fact]
+        [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void TestShortTermRetentionOnBasicStandardSubscriptions()
+        {
+            RunPowerShellTest("Test-ShortTermRetentionPolicyOnBasicStandardSubscriptions");
+        }
+        [Fact]
+        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestLongTermRetentionV2Backup()
         {
             RunPowerShellTest("Test-LongTermRetentionV2Backup");

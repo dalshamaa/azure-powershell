@@ -17,6 +17,7 @@ using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Commands.Sql.Backup.Model;
 using Microsoft.Azure.Commands.Sql.Database.Model;
 using Microsoft.Azure.Commands.Sql.Database.Services;
+using Microsoft.Azure.Commands.Sql.Database_Backup.Model;
 using Microsoft.Azure.Commands.Sql.Server.Adapter;
 using Microsoft.Azure.Management.Sql.LegacySdk.Models;
 using System;
@@ -299,6 +300,33 @@ namespace Microsoft.Azure.Commands.Sql.Backup.Services
         }
 
         /// <summary>
+        /// Get a backup LongTermRetention policy for a Azure SQL Database
+        /// </summary>
+        /// <param name="resourceGroup">The name of the resource group</param>
+        /// <param name="serverName">The name of the Azure SQL Server</param>
+        /// <param name="databaseName">The name of the Azure SQL Database</param>
+        /// <param name="current">Whether or not the user provided the Current switch to get the current implementation of LTR policy</param>
+        /// <returns>A backup LongTermRetention policy</returns>
+        internal AzureSqlDatabaseShortTermRetentionPolicyModel GetDatabaseBackupShortTermRetentionPolicy(
+            string resourceGroup,
+            string serverName,
+            string databaseName)
+        {
+                var baPolicy = Communicator.GetDatabaseShortTermRetentionPolicy(
+                    resourceGroup,
+                    serverName,
+                    databaseName);
+
+            return new AzureSqlDatabaseShortTermRetentionPolicyModel()
+            {
+                ResourceGroupName = resourceGroup,
+                ServerName = serverName,
+                DatabaseName = databaseName,
+                Policy = baPolicy
+            };
+        }
+
+        /// <summary>
         /// Create or update a backup LongTermRetention vault for a given Azure SQL Server
         /// </summary>
         /// <param name="resourceGroup">The name of the resource group</param>
@@ -394,7 +422,36 @@ namespace Microsoft.Azure.Commands.Sql.Backup.Services
                 };
             }
         }
+        /// <summary>
+        /// Create or update a backup LongTermRetention policy for a Azure SQL Database
+        /// </summary>
+        /// <param name="resourceGroup">The name of the resource group</param>
+        /// <param name="serverName">The name of the Azure SQL Server</param>
+        /// <param name="databaseName">The name of the Azure SQL Database</param>
+        /// <returns>A backup LongTermRetention policy</returns>
+        internal AzureSqlDatabaseShortTermRetentionPolicyModel SetDatabaseShortTermRetentionPolicy(
+            string resourceGroup,
+            string serverName,
+            string databaseName,
+            AzureSqlDatabaseShortTermRetentionPolicyModel model)
+        {
+            var baPolicy = Communicator.SetDatabaseShortTermRetentionPolicy(
+                    resourceGroup,
+                    serverName,
+                    databaseName,
+                    new Management.Sql.Models.ShortTermRetentionPolicy()
+                    {
+                        RetentionDays = model.Policy.RetentionDays
+                    });
 
+                return new AzureSqlDatabaseShortTermRetentionPolicyModel()
+                {
+                    ResourceGroupName = resourceGroup,
+                    ServerName = serverName,
+                    DatabaseName = databaseName,
+                    Policy = baPolicy
+                };
+        }
         /// <summary>
         /// Gets the Long Term Retention backups.
         /// </summary>

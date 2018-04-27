@@ -390,7 +390,7 @@ namespace Microsoft.Azure.Commands.Sql.Backup.Services
                 }
             };
 
-            Sku sku = new Sku();
+            Management.Internal.Resources.Models.Sku sku = new Management.Internal.Resources.Models.Sku();
             if (!string.IsNullOrWhiteSpace(model.RequestedServiceObjectiveName))
             {
                 sku.Name = model.RequestedServiceObjectiveName;
@@ -445,6 +445,40 @@ namespace Microsoft.Azure.Commands.Sql.Backup.Services
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Get the ShortTermRetention policy for a Azure SQL Database
+        /// </summary>
+        /// <param name="resourceGroup">The name of the resource group</param>
+        /// <param name="serverName">The name of the Azure SQL Server</param>
+        /// <param name="databaseName">The name of the Azure SQL Database</param>
+        /// <returns>A backup LongTermRetention policy</returns>
+        public ShortTermRetentionPolicy GetDatabaseShortTermRetentionPolicy(
+            string resourceGroupName,
+            string serverName,
+            string databaseName)
+        {
+            return GetCurrentSqlClient().ShortTermRetentionPolicies.Get(
+                resourceGroupName,
+                serverName,
+                databaseName);
+        }
+
+        /// <summary>
+        /// Sets a database's Long Term Retention policy.
+        /// </summary>
+        /// <param name="resourceGroup">The resource group name.</param>
+        /// <param name="serverName">The server name.</param>
+        /// <param name="databaseName">The database name.</param>
+        /// <param name="policy">The Long Term Retention policy to apply.</param>
+        public ShortTermRetentionPolicy SetDatabaseShortTermRetentionPolicy(
+            string resourceGroup,
+            string serverName,
+            string databaseName,
+            Management.Sql.Models.ShortTermRetentionPolicy policy)
+        {
+            return GetCurrentSqlClient().ShortTermRetentionPolicies.CreateOrUpdate(resourceGroup, serverName, databaseName, policy);
         }
 
         /// <summary>
