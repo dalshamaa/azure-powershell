@@ -196,21 +196,21 @@ function Test-ShortTermRetentionPolicyOnPremiumSubscription($location = "westcen
 		$databaseName = Get-DatabaseName
 		$db = New-AzureRmSqlDatabase -ResourceGroupName $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName
 
-		# Premium Policy Test - default retention
-		#$policy_default = Get-AzureRmSqlDatabaseShortTermRetentionPolicy -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName
-		#Assert-AreEqual $policy_default.Count 1
-		#Assert-AreEqual $policy_default[0].Policy.RetentionDays $defaultRetention
+		# Premium Policy Test - Default Retention
+		$policy_default = Get-AzureRmSqlDatabaseShortTermRetentionPolicy -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName
+		Assert-AreEqual $policy_default.Count 1
+		Assert-AreEqual $policy_default[0].Policy.RetentionDays $defaultRetention
 
 		# Test changing short term retention days
 		Set-AzureRmSqlDatabaseShortTermRetentionPolicy -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName -RetentionDays $updatedRetention
-		
+		$policy_updated = Get-AzureRmSqlDatabaseShortTermRetentionPolicy -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName
+		Assert-AreEqual $policy_updated.Count 1
+		Assert-AreEqual $policy_updated[0].Policy.RetentionDays $updatedRetention
+
 		#Test Piping
-		#$shortTermRetentionPeriod = Get-AzureRmSqlDatabase -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName | Get-AzureRmSqlDatabaseShortTermRetentionPolicy
-		#Assert-AreEqual $shortTermRetentionPeriod.Count 1
-		#Assert-AreEqual $shortTermRetentionPeriod[0].RetentionDays $defaultRetention
-				#$policy_updated = Get-AzureRmSqlDatabaseShortTermRetentionPolicy -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName
-		#Assert-AreEqual $policy_updated.Count 1
-		#Assert-AreEqual $policy_updated[0].Policy.RetentionDays $updatedRetention
+		$policy_piping = Get-AzureRmSqlDatabase -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName | Get-AzureRmSqlDatabaseShortTermRetentionPolicy
+		Assert-AreEqual $policy_piping.Count 1
+		Assert-AreEqual $policy_piping[0].RetentionDays $updatedRetention
 	}
 	finally
 	{
@@ -245,9 +245,9 @@ function Test-ShortTermRetentionPolicyOnBasicStandardSubscriptions($location = "
 		Assert-AreEqual $policy_updated[0].Policy.RetentionDays $updatedRetention
 
 		#Test Piping
-		#$shortTermRetentionPeriod = Get-AzureRmSqlDatabase -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName | Get-AzureRmSqlDatabaseShortTermRetentionPolicy
-		#Assert-AreEqual $shortTermRetentionPeriod.Count 1
-		#Assert-AreEqual $shortTermRetentionPeriod[0].RetentionDays $defaultBasicRetention
+		$shortTermRetentionPeriod = Get-AzureRmSqlDatabase -ResourceGroup $rg.ResourceGroupName -ServerName $server.ServerName -DatabaseName $databaseName | Get-AzureRmSqlDatabaseShortTermRetentionPolicy
+		Assert-AreEqual $shortTermRetentionPeriod.Count 1
+		Assert-AreEqual $shortTermRetentionPeriod[0].RetentionDays $defaultBasicRetention
 	}
 	finally
 	{
